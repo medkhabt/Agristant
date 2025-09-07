@@ -10,6 +10,6 @@ jobs:
       - name: Login to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Build ingestion
-        run: docker build -f services/ingestion/Dockerfile -t ghcr.io/${{ github.repository }}/ingestion:latest .
+        run: docker build -f services/ingestion/Dockerfile -t ghcr.io/medkhabt/agristant/ingestion:latest .
       - name: Push ingestion
-        run: docker push ghcr.io/${{ github.repository }}/ingestion:latest
+        run: docker push ghcr.io/medkhabt/agristant/ingestion:latest
