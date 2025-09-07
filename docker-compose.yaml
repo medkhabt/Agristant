@@ -5,7 +5,9 @@ services:
     restart: unless-stopped
 
   ingestion:
-    build: ./services/ingestion
+    build:
+      context: .
+      dockerfile: ./services/ingestion/Dockerfile
     ports: ["8080:8080"]
     volumes:
       - ingestion-data:/data
