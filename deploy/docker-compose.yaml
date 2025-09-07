@@ -1,0 +1,26 @@
+services:
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    restart: unless-stopped
+
+  ingestion:
+    image: ghcr.io/medkhabt/agristant/ingestion:latest
+    ports: ["8080:8080"]
+    volumes:
+      - ingestion-data:/data
+    environment:
+      DATA_DIR: /data
+      REDIS_ADDR: redis:6379
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - init-perms
+  init-perms:
+    image: busybox
+    command: ["sh", "-c", "chown -R 65532:65532 /data || true"]
+    volumes:
+      - ingestion-data:/data
+    restart: "no"
+volumes:
+  ingestion-data:
