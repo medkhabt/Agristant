@@ -3,7 +3,6 @@ services:
     image: redis:7-alpine
     command: ["redis-server", "--save", "", "--appendonly", "no"]
     restart: unless-stopped
-
   ingestion:
     build:
       context: .
@@ -24,5 +23,21 @@ services:
     volumes:
       - ingestion-data:/data
     restart: "no"
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports: ["9090:9090"]
+    restart: unless-stopped
+    depends_on: [ingestion]
+  grafana:
+    image: grafana/grafana
+    environment:
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports: ["3000:3000"]
+    restart: unless-stopped
+    depends_on: [prometheus]
 volumes:
   ingestion-data:
